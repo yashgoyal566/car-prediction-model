@@ -4,7 +4,9 @@ import {
   CircleDollarSign, Gauge, LoaderCircle, Menu, Search, ShieldCheck, Sparkles, X
 } from 'lucide-react'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_BASE_URL !== undefined && import.meta.env.VITE_API_BASE_URL !== ''
+  ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, '')
+  : (import.meta.env.DEV ? 'http://localhost:8000' : '')
 
 const initialForm = {
   carName: '', brand: '', model: '', vehicleAge: '', fuelType: '', transmission: '',
@@ -100,7 +102,7 @@ function App() {
     fetch(`${API_BASE}/catalog`)
       .then(res => { if (!res.ok) throw new Error('Bad response'); return res.json() })
       .then(data => setCatalog(data))
-      .catch(() => setCatalogError('Cannot reach the prediction service. Please start the backend server on port 8000.'))
+      .catch(() => setCatalogError('Cannot reach the prediction service. Please ensure the backend server is running and accessible.'))
   }, [])
 
   const changeForm = (event) => {
@@ -167,7 +169,7 @@ function App() {
       setResult({ estimate: data.predicted_price, low: data.price_range.low, high: data.price_range.high })
       document.getElementById('prediction-result')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     } catch (error) {
-      setRequestError(error.message === 'Failed to fetch' ? 'Cannot reach the prediction service. Start the backend on port 8000 and try again.' : error.message)
+      setRequestError(error.message === 'Failed to fetch' ? 'Cannot reach the prediction service. Please verify backend URL and service status.' : error.message)
     } finally {
       setIsLoading(false)
     }
