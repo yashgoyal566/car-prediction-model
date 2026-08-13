@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply m-0 bg-slate-50 font-sans text-slate-700 antialiased; }
+  * { box-sizing: border-box; }
+}
+
+@layer components {
+  .field-label { @apply mb-2 block text-sm font-semibold text-slate-700; }
+  .field-control { @apply block w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-4 focus:ring-sky-100; }
+  .field-error { @apply mt-1.5 text-xs font-medium text-rose-600; }
+}

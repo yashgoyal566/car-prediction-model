@@ -1,0 +1,23 @@
+{
+  "features": [
+    "car_name",
+    "brand",
+    "model",
+    "vehicle_age",
+    "km_driven",
+    "seller_type",
+    "fuel_type",
+    "transmission_type",
+    "mileage",
+    "engine",
+    "max_power",
+    "seats"
+  ],
+  "metrics": {
+    "mae": 95774.2,
+    "rmse": 185397.88,
+    "r2": 0.944,
+    "training_rows": 12327,
+    "test_rows": 3082
+  }
+}
