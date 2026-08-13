@@ -94,16 +94,28 @@ def load_model():
 model = load_model()
 
 
-@app.get("/")
-def root():
-    return {
-        "service": "AutoValue Prediction API",
-        "status": "running",
-        "model_loaded": model is not None,
-        "health": "/health",
-        "documentation": "/docs",
-        "prediction_endpoint": "/predict",
-    }
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+DIST_DIR = ROOT.parent / "dist"
+if DIST_DIR.exists() and (DIST_DIR / "index.html").exists():
+    app.mount("/assets", StaticFiles(directory=DIST_DIR / "assets"), name="assets")
+
+    @app.get("/", response_class=FileResponse)
+    def root():
+        return FileResponse(DIST_DIR / "index.html")
+else:
+    @app.get("/")
+    def root():
+        return {
+            "service": "AutoValue Prediction API",
+            "status": "running",
+            "model_loaded": model is not None,
+            "health": "/health",
+            "documentation": "/docs",
+            "prediction_endpoint": "/predict",
+        }
+
 
 
 @app.get("/health")
