@@ -94,38 +94,7 @@ def load_model():
 model = load_model()
 
 
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-DIST_DIR = ROOT.parent / "dist"
-if DIST_DIR.exists() and (DIST_DIR / "index.html").exists():
-    app.mount("/assets", StaticFiles(directory=DIST_DIR / "assets"), name="assets")
-
-    @app.get("/", response_class=FileResponse)
-    def root():
-        return FileResponse(DIST_DIR / "index.html")
-
-    @app.get("/{path:path}")
-    def serve_static(path: str):
-        if path in ["catalog", "health", "model-info", "predict", "docs", "openapi.json"] or path.startswith("api/"):
-            raise HTTPException(status_code=404, detail="Not Found")
-        file_path = DIST_DIR / path
-        if file_path.exists() and file_path.is_file():
-            return FileResponse(file_path)
-        return FileResponse(DIST_DIR / "index.html")
-else:
-    @app.get("/")
-    def root():
-        return {
-            "service": "AutoValue Prediction API",
-            "status": "running",
-            "model_loaded": model is not None,
-            "health": "/health",
-            "documentation": "/docs",
-            "prediction_endpoint": "/predict",
-        }
-
-
+# ─── API Routes (must be registered BEFORE the catch-all) ───
 
 @app.get("/health")
 def health():
@@ -176,10 +145,40 @@ def predict(features: CarFeatures):
     }
 
 
+# ─── Static file serving (catch-all MUST be last) ───
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+DIST_DIR = ROOT.parent / "dist"
+if DIST_DIR.exists() and (DIST_DIR / "index.html").exists():
+    app.mount("/assets", StaticFiles(directory=DIST_DIR / "assets"), name="assets")
+
+    @app.get("/", response_class=FileResponse)
+    def root():
+        return FileResponse(DIST_DIR / "index.html")
+
+    @app.get("/{path:path}")
+    def serve_static(path: str):
+        file_path = DIST_DIR / path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        return FileResponse(DIST_DIR / "index.html")
+else:
+    @app.get("/")
+    def root():
+        return {
+            "service": "AutoValue Prediction API",
+            "status": "running",
+            "model_loaded": model is not None,
+            "health": "/health",
+            "documentation": "/docs",
+            "prediction_endpoint": "/predict",
+        }
+
+
 if __name__ == "__main__":
     import os
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
-
-
