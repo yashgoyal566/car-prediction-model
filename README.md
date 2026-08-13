@@ -32,3 +32,21 @@ npm run dev
 
 Open `http://localhost:5173` in your browser.
 
+---
+
+## 🚀 Live Deployment
+
+Deployed on **Railway** as a single service (FastAPI serves both the API and React frontend):
+
+🔗 **[https://car-prediction-model-production.up.railway.app](https://car-prediction-model-production.up.railway.app)**
+
+---
+
+## Tech Stack
+
+| Layer      | Technology                     |
+|------------|--------------------------------|
+| ML Model   | CatBoost Regressor             |
+| Backend    | FastAPI + Uvicorn              |
+| Frontend   | React 19 + Vite + Tailwind CSS |
+| Deployment | Railway (Nixpacks)             |
